@@ -1,6 +1,6 @@
 /**
  * Chường trình nhận một số nguyên n và in ra dạng nhị phân của nó
- * @param n cân được nhập vào để chuyển đổi
+ *  n cân được nhập vào để chuyển đổi
  * Hạn chế với n nhập vào là một số âm
  */
 
