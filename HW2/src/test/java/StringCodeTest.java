@@ -84,5 +84,24 @@ public class StringCodeTest {
 	}
 
 	// Need test cases for stringIntersect
+    @Test
+    public void testStringIntersect_1(){
+        assertEquals( true, StringCode.stringIntersect("afdeaf","dsfdeafd",4) );
+    }
+
+    @Test
+    public void testStringIntersect_2(){
+        assertEquals( false, StringCode.stringIntersect("afdeaf","dkahdo",4) );
+    }
+
+    @Test
+    public void testStringIntersect_3(){
+        assertEquals( true, StringCode.stringIntersect("","dsfdeafd",0) );
+    }
+
+    @Test
+    public void testStringIntersect_4(){
+        assertEquals( true, StringCode.stringIntersect(" aa ","39jd 2930aa",2) );
+    }
 	
 }
