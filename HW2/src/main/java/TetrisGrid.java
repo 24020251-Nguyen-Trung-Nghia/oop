@@ -8,80 +8,77 @@ public class TetrisGrid {
     /**
      * Constructs a new instance with the given grid.
      * Does not make a copy.
-     *
-     * @param grid
      */
     public TetrisGrid(boolean[][] grid) {
-        int I = grid.length;
-        int J = grid[0].length;
-        this.grid = new boolean[I][J];
-        for( int i =0 ; i < I ; i++ ) {
-            for ( int j =0 ; j < J ; j++ ) {
-                this.grid[i][j] = grid[i][j];
+        this.grid = grid;
+    }
+
+    /**
+     * Helper to check if a single row is completely full.
+     * Assumes grid[column][row].
+     */
+    private boolean isRowFull(int row) {
+        // grid.length is the width (number of columns)
+        for (int col = 0; col < grid.length; col++) {
+            if (!grid[col][row]) {
+                return false;
             }
         }
+        return true;
     }
 
     /**
      * Does row-clearing on the grid (see handout).
-     */
-    /**
-     * Thực hiện xóa tất cả các hàng đầy và dịch chuyển các khối còn lại xuống.
-     * Đây là logic chuẩn của Tetris (giống như code gợi ý trước).
+     * This implementation is more efficient using a two-pointer approach,
+     * reducing nested loops for the shift operation.
      */
     public void clearRows() {
-        int nextRowIndex = grid.length - 1;
+        if (grid.length == 0 || grid[0].length == 0) return; // Xử lý trường hợp lưới rỗng
 
-        for (int i = grid.length - 1; i >= 0; i--) {
+        int width = grid.length;
+        int height = grid[0].length;
 
-            boolean isFull = true;
-            for (int j = 0; j < grid[0].length; j++) {
-                if (!grid[i][j]) { // Nếu tìm thấy một ô trống (false)
-                    isFull = false;
-                    break;
-                }
-            }
+        // 'readRow' là chỉ số đọc (quét qua tất cả các hàng)
+        int readRow = 0;
+        // 'writeRow' là chỉ số ghi (chỉ ghi các hàng KHÔNG đầy)
+        int writeRow = 0;
 
-            // Xử lý dịch chuyển (chỉ áp dụng cho hàng KHÔNG đầy)
-            if (!isFull) {
-                // Nếu vị trí hàng đích (nextRowIndex) khác vị trí hiện tại (i):
-                // Tức là có hàng đã bị xóa (đã có khoảng trống)
-                if (nextRowIndex != i) {
-                    // Sao chép nội dung hàng i xuống vị trí mới nextRowIndex
-                    for (int j = 0; j < grid[0].length; j++) {
-                        grid[nextRowIndex][j] = grid[i][j];
+        //  Quét lưới để sao chép các hàng KHÔNG đầy xuống vị trí thấp hơn
+        while (readRow < height) {
+            if (!isRowFull(readRow)) {
+                // Nếu hàng KHÔNG đầy, ta sao chép nó xuống 'writeRow'
+
+                // Chỉ sao chép nếu 'readRow' lớn hơn 'writeRow' (tránh sao chép đè lên chính nó)
+                if (readRow != writeRow) {
+                    for (int col = 0; col < width; col++) {
+                        // Sao chép grid[cột][readRow] xuống grid[cột][writeRow]
+                        grid[col][writeRow] = grid[col][readRow];
                     }
                 }
-                // Giảm chỉ số để chuẩn bị cho hàng không đầy tiếp theo (đi lên)
-                nextRowIndex--;
-            }
 
-            // Nếu hàng ĐẦY, ta bỏ qua nó. nextRowIndex không thay đổi,
-            // khiến hàng không đầy phía trên sẽ ghi đè lên hàng đầy này.
+                writeRow++; // Tăng chỉ số ghi để chuẩn bị cho hàng tiếp theo
+            }
+            // Nếu hàng ĐẦY, ta bỏ qua nó. writeRow KHÔNG tăng,
+            // khiến hàng tiếp theo (KHÔNG đầy) sẽ ghi đè lên hàng đầy này.
+
+            readRow++; // Luôn tăng chỉ số đọc để kiểm tra hàng tiếp theo
         }
 
-        //  Làm trống các hàng trên cùng (các hàng đã bị xóa)
-        // Các hàng từ 0 đến nextRowIndex đã bị xóa và cần được làm trống.
-        for (int i = 0; i <= nextRowIndex; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                grid[i][j] = false;
+        //  Điền FALSE vào các hàng trên cùng (từ writeRow đến height - 1)
+        // 'writeRow' hiện tại là chỉ số của hàng trống đầu tiên.
+        while (writeRow < height) {
+            for (int col = 0; col < width; col++) {
+                grid[col][writeRow] = false;
             }
+            writeRow++;
         }
     }
 
     /**
      * Returns the internal 2d grid array.
-     *
      * @return 2d grid array
      */
     boolean[][] getGrid() {
-        boolean[][] newGrid = new boolean[grid.length][grid[0].length];
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                newGrid[i][j] = this.grid[i][j];
-            }
-        }
-
-        return newGrid; // YOUR CODE HERE
+        return grid;
     }
 }

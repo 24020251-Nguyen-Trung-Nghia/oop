@@ -19,7 +19,7 @@ public class TetrisGridTest {
         boolean[][] after =
                 {
                         {false, false, false},
-                        {true, true, false}
+                        {true, false, false}
                 };
 
         TetrisGrid tetris = new TetrisGrid(before);
